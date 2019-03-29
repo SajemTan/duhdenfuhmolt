@@ -1,0 +1,12 @@
+type: command
+description: |
+  **flt** accepts one string argument. It will convert that string into the Foam Letter Tan vysyryt.
+examples:
+- in: >
+    "triangle"
+  out: >
+    irtahcjf
+- in: >
+   "The quick brown fox jumps over the lazy dog"
+  out: >
+    Inf ovtgk drqmh eqp lvwxs qufr inf jazy bqc

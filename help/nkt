@@ -1,0 +1,20 @@
+type: command
+description: |
+  **nkt** accepts one integer and one string. It will convert the string into the the Next Key Tan vysyzlyt in the direction of the number (right is positive, left is negative).
+examples:
+- in: >
+    1 "asdf"
+  out: >
+    sdfg
+- in: >
+    -1 "qwerty"
+  out: >
+    pqwert
+- in: >
+    2 "Pasta"
+  out: >
+    Edgud
+- in: >
+   1 "The quick brown fox jumps over the lazy dog"
+  out: >
+    Yjr wiovl ntpem gpc kizqd pbrt yjr asxu fph
