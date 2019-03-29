@@ -1,0 +1,13 @@
+type: command
+description: |
+  **emojify** accepts one argument. It will convert that argument into an emoji string.
+examples:
+- in: triangle
+  out: >
+    :regional_indicator_t: :regional_indicator_r: :information_source: :a: :ng: :regional_indicator_l: :regional_indicator_e:
+- in: \"your opinion is invalid\"
+  out: >
+    :regional_indicator_y: :o2: :regional_indicator_u: :regional_indicator_r:   
+    :o2: :parking: :information_source: :regional_indicator_n: :information_source: :o2: :regional_indicator_n:   
+    :information_source: :regional_indicator_s:   
+    :information_source: :regional_indicator_n: :regional_indicator_v: :a: :regional_indicator_l: :information_source: :regional_indicator_d:
