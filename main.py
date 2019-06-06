@@ -1,16 +1,34 @@
+import asyncio
 import discord
 from discord.ext import commands
+from json import load
 from os import listdir
 from utils import get_yaml_contents
+import lexicon
 
 bot = commands.Bot(command_prefix='st!')
+
+@bot.event
+async def on_ready():
+    print("Bot Ready.")
+    await lexicon.update_lexicon()
+    print("Lexicon Ready.")
+
+@bot.command()
+async def lexupdate(ctx):
+    await lexicon.update_lexicon()
+    await ctx.send("Updated lexicon")
+
+@bot.command()
+async def define(ctx, s: str):
+    await ctx.send(lexicon.define(s))
 
 @bot.command()
 async def emojify(ctx, s: str):
     e = ":exclamation:"
     q = ":question:"
     n = ":interrobang:"
-    ri = ":regional_indicator_{}:"
+    ri = lambda x: ":regional_indicator_" + x + ":"
     
     result = []
     for i in s.lower():
@@ -40,14 +58,18 @@ async def emojify(ctx, s: str):
                 result.append(":ab:")
             else:
                 result.append(":b:")
-        elif i == "g" and last == ri.format("n"):
+        elif i == "g" and last == ri("n"):
             result.pop()
             result.append(":ng:")
         elif i == "k" and last == ":o:":
             result.pop()
             result.append(":ok:")
-        else: result.append(ri.format(i))
+        else: result.append(ri(i))
     await ctx.send(" ".join(result))
+
+@bot.command()
+async def y(ctx, s: str):
+    await ctx.send("".join(["y" if char in "aeiou" else "Y" if char in "AEIOU" else char for char in s]))
 
 @bot.command()
 async def flt(ctx, s: str):
@@ -104,11 +126,12 @@ async def help(ctx, topic: str = ""):
         try:
             message = message + "__**Examples:**__\n\n"
             for ex in f["examples"]:
-                message = message + "**input:** `st!{} {}`\n**output:** {}".format(
-                    topic, ex["in"], ex["out"]
-                )
+                message = message + f"**input:** `st!{topic} {ex['in']}`\n"
+                try: message = message + f"**output:** {ex['out']}\n"
+                except KeyError: pass
         except KeyError: pass
     
         await ctx.send(message)
 
 bot.run("NDM0MTM2NzA2Mjk2NTc4MTAx.D384Zg.NTim37R4oEhokVTYyWzf1jcy-CU")
+asyncio.run(lexicon.update_lexicon())

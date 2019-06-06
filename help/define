@@ -1,0 +1,6 @@
+type: command
+description: |
+  **define** accepts one string argument. It uses the cached version of the lexicon to find all its definitions and then spits them out.
+examples:
+- in: >
+    "duhden"

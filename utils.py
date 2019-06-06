@@ -1,3 +1,5 @@
+import aiohttp
+import asyncio
 from sys import argv
 from os import mkdir
 from hashlib import sha1
@@ -17,6 +19,11 @@ def get_contents(fn):
 
 def get_yaml_contents(fn):
     return yaml.load(get_contents(fn))
+
+async def get_url_contents(url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            return await response.text()
 
 def write_file(fn, tx):
     with open(fn, "w") as f:
