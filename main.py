@@ -7,6 +7,7 @@ from utils import get_yaml_contents
 import lexicon
 
 bot = commands.Bot(command_prefix='st!')
+reactions = get_yaml_contents("reactions")
 
 @bot.event
 async def on_ready():
@@ -14,13 +15,16 @@ async def on_ready():
     await lexicon.update_lexicon()
     print("Lexicon Ready.")
 
+    pasta = discord.Game("with a pile of spaghetti")
+    await bot.change_presence(activity=pasta)
+
 @bot.listen()
 async def on_message(message):
-    if "horrifying" in message.content.lower():
-        await message.channel.send("℥ɔ℥")
+    global reactions
 
-    if "hmm" in message.content.lower():
-        await message.channel.send("https://i.imgur.com/HEGiPD7.gif")
+    for key, react in reactions.items():
+        if key in message.content.lower():
+            await message.channel.send(react)
     
 @bot.command()
 async def lexupdate(ctx):
