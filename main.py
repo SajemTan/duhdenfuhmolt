@@ -14,6 +14,14 @@ async def on_ready():
     await lexicon.update_lexicon()
     print("Lexicon Ready.")
 
+@bot.listen()
+async def on_message(message):
+    if "horrifying" in message.content.lower():
+        await message.channel.send("℥ɔ℥")
+
+    if "hmm" in message.content.lower():
+        await message.channel.send("https://i.imgur.com/HEGiPD7.gif")
+    
 @bot.command()
 async def lexupdate(ctx):
     await lexicon.update_lexicon()
