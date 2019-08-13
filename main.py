@@ -1,3 +1,4 @@
+import random
 import asyncio
 import discord
 from discord.ext import commands
@@ -9,17 +10,31 @@ import lexicon
 bot = commands.Bot(command_prefix='st!')
 reactions = get_yaml_contents("reactions")
 
-@bot.event
-async def on_ready():
+@bot.listen("on_ready")
+async def lexicon_load():
     print("Bot Ready.")
     await lexicon.update_lexicon()
     print("Lexicon Ready.")
 
-    pasta = discord.Game("with a pile of spaghetti")
-    await bot.change_presence(activity=pasta)
-
+@bot.listen("on_ready")
+async def pasta_game():
+    random.seed()
+    print("Randoms Seeded.")
+    pastalist = get_yaml_contents("pastalist").split(" ")
+    while True:
+        await bot.change_presence(
+            activity=discord.Game(
+                "with a pile of " +
+                pastalist[random.randrange(0, len(pastalist))]
+            )
+        )
+        await asyncio.sleep(60)
+    
 @bot.listen()
 async def on_message(message):
+    if message.author == bot.user:
+        return
+    
     global reactions
 
     for key, react in reactions.items():
