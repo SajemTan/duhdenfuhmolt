@@ -20,15 +20,14 @@ async def lexicon_load():
 async def pasta_game():
     random.seed()
     print("Randoms Seeded.")
-    pastalist = get_yaml_contents("pastalist").split(" ")
+    pastalist = get_yaml_contents("pastalist").split()
     while True:
         await bot.change_presence(
             activity=discord.Game(
-                "with a pile of " +
-                pastalist[random.randrange(0, len(pastalist))]
+                "with a pile of " + random.choice(pastalist)
             )
         )
-        await asyncio.sleep(60)
+        await asyncio.sleep(150)
     
 @bot.listen()
 async def on_message(message):
