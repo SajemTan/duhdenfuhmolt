@@ -38,8 +38,16 @@ async def on_message(message):
     global reactions
 
     for key, react in reactions.items():
-        if search(key, message.content.lower()):
+        if (
+                search(key, message.content.lower()) and
+                message.channel.id != 244564667790262274
+        ):
             await message.channel.send(react)
+
+@bot.listen()
+async def on_reaction_add(reaction, user):
+    if user.id == 247134460024193027:
+        await reaction.message.add_reaction(reaction)
     
 @bot.command()
 async def lexupdate(ctx):
