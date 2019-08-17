@@ -1,4 +1,3 @@
-from random import seed, choice
 from re import search
 import asyncio
 import discord
@@ -7,6 +6,7 @@ from json import load
 from os import listdir
 from utils import get_yaml_contents
 import lexicon
+from lists import random_element
 
 bot = commands.Bot(command_prefix='st!')
 reactions = get_yaml_contents("reactions")
@@ -19,13 +19,10 @@ async def lexicon_load():
 
 @bot.listen("on_ready")
 async def pasta_game():
-    seed()
-    print("Randoms Seeded.")
-    pastalist = get_yaml_contents("pastalist").split()
     while True:
         await bot.change_presence(
             activity=discord.Game(
-                "with a pile of " + choice(pastalist)
+                "with a pile of " + random_element("pasta")
             )
         )
         await asyncio.sleep(150)
@@ -42,7 +39,7 @@ async def on_message(message):
                 search(key, message.content.lower()) and
                 message.channel.id != 244564667790262274
         ):
-            await message.channel.send(react)
+            await message.channel.send(react.format(rt=random_element("triangle")))
 
 @bot.listen()
 async def on_reaction_add(reaction, user):
