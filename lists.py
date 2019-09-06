@@ -11,4 +11,9 @@ def random_element(l: str):
     try: lists[l]
     except KeyError: lists[l] = get_contents("lists/" + l).split("\n")
 
-    return choice(lists[l])
+    s = choice(lists[l])
+
+    if s == "":
+        random_element(l)
+    else:
+        return s

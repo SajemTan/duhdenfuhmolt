@@ -2,7 +2,6 @@ from re import search
 import asyncio
 import discord
 from discord.ext import commands
-from json import load
 from os import listdir
 from utils import get_yaml_contents
 import lexicon
