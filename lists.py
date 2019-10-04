@@ -14,6 +14,6 @@ def random_element(l: str):
     s = choice(lists[l])
 
     if s == "":
-        random_element(l)
+        return random_element(l)
     else:
         return s
