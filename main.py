@@ -21,7 +21,7 @@ async def pasta_game():
     while True:
         await bot.change_presence(
             activity=discord.Game(
-                "with a pile of " + random_element("pasta")
+                "with a pile of " + random_element("pasta").title()
             )
         )
         await asyncio.sleep(150)
