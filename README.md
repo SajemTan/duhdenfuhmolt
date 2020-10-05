@@ -6,7 +6,9 @@ Create the file `Token` containing your API token.
 
 Create the file `reactions` containing a yaml associative array with:
 
-```yaml "regex": "reaction text" ```
+```yaml
+"regex": "reaction text"
+```
 
 Whenever a message whose text matches `regex` is found, the bot will reply
 with `reaction text`.
