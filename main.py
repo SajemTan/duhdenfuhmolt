@@ -3,7 +3,7 @@ import asyncio
 import discord
 from discord.ext import commands
 from os import listdir
-from utils import get_yaml_contents
+from utils import get_contents, get_yaml_contents
 import lexicon
 from lists import random_element
 
@@ -38,7 +38,12 @@ async def on_message(message):
                 search(key, message.content.lower()) and
                 message.channel.id != 244564667790262274
         ):
-            await message.channel.send(react.format(rt=random_element("triangle")))
+            await message.channel.send(
+                    react.format(
+                        rt=random_element("triangle"),
+                        ri=random_element("indeed")
+                    )
+            )
 
 @bot.listen()
 async def on_reaction_add(reaction, user):
@@ -164,5 +169,5 @@ async def help(ctx, topic: str = ""):
     
         await ctx.send(message)
 
-bot.run("NDM0MTM2NzA2Mjk2NTc4MTAx.D384Zg.NTim37R4oEhokVTYyWzf1jcy-CU")
+bot.run(get_contents("Token").strip())
 asyncio.run(lexicon.update_lexicon())

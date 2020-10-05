@@ -1,4 +1,7 @@
 env/*
 *.py[cso]
 
+/Token
+/reactions
+
 *~

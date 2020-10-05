@@ -7,7 +7,7 @@ lexicon = {}
 async def update_lexicon():
     global lexicon
     
-    data = await get_url_contents("https://mr-martian.github.io/Sajem_Tan/lexicon.js")
+    data = await get_url_contents("https://sajemtan.github.io/lexicon.js")
     data = data.split("var lexicon = ")[1].split("};")[0] + "}"
     data = "\n".join([i for i in data.split("\n") if "//" not in i])
 

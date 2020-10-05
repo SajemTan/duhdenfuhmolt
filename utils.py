@@ -18,7 +18,7 @@ def get_contents(fn):
         return f.read()
 
 def get_yaml_contents(fn):
-    return yaml.load(get_contents(fn))
+    return yaml.safe_load(get_contents(fn))
 
 async def get_url_contents(url):
     async with aiohttp.ClientSession() as session:
