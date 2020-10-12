@@ -9,6 +9,24 @@ from lists import random_element
 
 bot = commands.Bot(command_prefix='st!')
 reactions = get_yaml_contents("reactions")
+blacklist = [int(x) for x in get_contents("blacklist").split()]
+replacements = {}
+
+for k, v in get_yaml_contents("replacements").items():
+    krev = k[::-1]
+    try:
+        replacements[krev[0]]
+    except KeyError:
+        replacements[krev[0]] = []
+    
+    replacements[krev[0]].append((krev[1:], v))
+
+replacements = {k: sorted(v, key=lambda x: len(x[0]), reverse=True) for k, v in replacements.items()}
+
+print(replacements)
+
+# {k[::-1]: v for k, v in get_yaml_contents("replacements").items()}
+# replacekeys = sorted(replacements.keys(), key=len)
 
 @bot.listen("on_ready")
 async def lexicon_load():
@@ -36,7 +54,7 @@ async def on_message(message):
     for key, react in reactions.items():
         if (
                 search(key, message.content.lower()) and
-                message.channel.id != 244564667790262274
+                message.channel.id not in blacklist
         ):
             await message.channel.send(
                     react.format(
@@ -61,47 +79,45 @@ async def define(ctx, s: str):
 
 @bot.command()
 async def emojify(ctx, s: str):
-    e = ":exclamation:"
-    q = ":question:"
-    n = ":interrobang:"
-    ri = lambda x: ":regional_indicator_" + x + ":"
-    
-    result = []
-    for i in s.lower():
-        last = None;
-        try: last = result[-1]
-        except IndexError: pass
-        if i == " " or i == "\n": result.append(i)
-        elif i == "!":
-            if last == e:
-                result.pop()
-                result.append(":bangbang:")
-            elif last == q:
-                result.pop()
-                result.append(n)
-            else: result.append(e)
-        elif i == "?":
-            if last == e:
-                result.pop()
-                result.append(n)
-            else: result.append(q)
-        elif i in "am": result.append(":%s:"%i)
-        elif i == "o": result.append(":o2:")
-        elif i == "p": result.append(":parking:")
-        elif i == "i": result.append(":information_source:")
-        elif i == "b":
-            if last == "a":
-                result.append(":ab:")
-            else:
-                result.append(":b:")
-        elif i == "g" and last == ri("n"):
-            result.pop()
-            result.append(":ng:")
-        elif i == "k" and last == ":o:":
-            result.pop()
-            result.append(":ok:")
-        else: result.append(ri(i))
-    await ctx.send(" ".join(result))
+    response = ""
+
+    for idx, ch in enumerate(s.lower()):
+        if ch in replacements:
+            before = response
+            for k, v in replacements[ch]:
+                try:
+                    for idx2, ch2 in enumerate(k):
+                        if response[-1 - idx2] != ch2:
+                            break
+                    else:
+                        response = response[:len(response) - len(k)] + v
+                        break
+                except IndexError:
+                    break
+            if before == response:
+                response += ch
+        else:
+            response += ch
+    await ctx.send(response)
+
+#    new = []
+#    for idx, i in enumerate(response):
+#        inside_emoji = False
+#        for char in i:
+#            if char == ":":
+#                if not inside_emoji:
+#                    new.append("")
+#                new[-1] += char
+#                inside_emoji = not inside_emoji
+#            elif inside_emoji:
+#                new[-1] += char
+#            else:
+#                if char.isalpha():
+#                    new.append(f":regional_indicator_{char}:")
+#                else:
+#                    new.append(char)
+#        new.append(":")
+#    await ctx.send(" ".join(new[:-1]))
 
 @bot.command()
 async def y(ctx, s: str):
@@ -145,18 +161,16 @@ bot.remove_command("help")
 @bot.command()
 async def help(ctx, topic: str = ""):
     if topic == "":
-        await ctx.send("List of help topics:\n\n{}".format(
-            "\n".join(listdir("help"))
-        ))
+        await ctx.send(
+                "List of help topics:\n\n" + "\n".join(listdir("help"))
+        )
     else:
-        f = get_yaml_contents("help/{}".format(topic))
+        f = get_yaml_contents("help/" + topic)
     
-        message = "Help for {} **{}**:\n\n".format(f["type"], topic)
+        message = f"Help for {f['type']} **{topic}**:\n\n"
         
         try:
-            message = message + "__**Description:**__\n\n{}\n".format(
-                f["description"]
-            )
+            message += f"__**Description:**__\n\n{f['description']}\n"
         except KeyError: pass
     
         try:
