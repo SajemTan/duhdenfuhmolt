@@ -1,4 +1,5 @@
 require 'discordrb'
+require 'yaml'
 
 require './ortho.rb'
 
@@ -6,6 +7,7 @@ bot = Discordrb::Commands::CommandBot.new token: File.readlines("Token")[0], pre
 
 lists = Hash.new { |hash, key| File.readlines("lists/#{key}") }
 blacklist = File.readlines("blacklist").to_set.map {|x| x.to_i}
+reactions = YAML.load_file("reactions").map {|k, v| [Regexp.new(k), v]}
 
 bot.ready { |event|
     Thread.new {
@@ -16,6 +18,16 @@ bot.ready { |event|
     }
 }
 
+bot.message { |event|
+    text = event.message.text
+
+    reactions.each { |k, v|
+        if text.match?(k)
+            event.respond v
+        end
+    }
+}
+            
 bot.message_edit { |event|
     if !blacklist.include?(event.message.channel.id) then
         event.message.create_reaction "\u{1F35E}"
