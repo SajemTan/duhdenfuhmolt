@@ -2,36 +2,64 @@ require 'discordrb'
 require 'yaml'
 
 require './ortho.rb'
+require './lexicon.rb'
 
-bot = Discordrb::Commands::CommandBot.new token: File.readlines("Token")[0], prefix: "dfr!"
+bot = Discordrb::Commands::CommandBot.new token: File.read("Token").strip, prefix: "dfr!"
 
-lists = Hash.new { |hash, key| File.readlines("lists/#{key}") }
-blacklist = File.readlines("blacklist").to_set.map {|x| x.to_i}
-reactions = YAML.load_file("reactions").map {|k, v| [Regexp.new(k), v]}
+@lists = Hash.new { |hash, key| File.readlines("lists/#{key}") }
+@blacklist = File.readlines("blacklist").to_set.map {|x| x.to_i}
+@reactions = YAML.load_file("reactions").map {|k, v| [Regexp.new(k), v]}
+@lexicon = Lexicon.new
+
+def listsub(str)
+    str.gsub(/(\{.+\})/) { |m|
+        @lists[m[1..-2]].sample
+    }
+end
 
 bot.ready { |event|
     Thread.new {
         while true do
-            bot.update_status "online", "with a pile of #{lists[:pasta].sample.capitalize}", nil
+            bot.update_status "online", "with a pile of #{@lists[:pasta].sample.capitalize}", nil
             sleep 90
         end
     }
 }
 
 bot.message { |event|
-    text = event.message.text
+    if !@blacklist.include?(event.channel.id)
+        text = event.message.text
 
-    reactions.each { |k, v|
-        if text.match?(k)
-            event.respond v
+        @reactions.each { |k, v|
+            if text.match?(k)
+                event.respond listsub(v)
+            end
+        }
+    end
+
+    event.message.text.match(/\[\[(.+)\]\]/) { |data|
+        unless (d = @lexicon.define $1).empty?
+            event.respond(format_entry_array($1, d))
         end
     }
 }
             
 bot.message_edit { |event|
-    if !blacklist.include?(event.message.channel.id) then
+    if !@blacklist.include?(event.message.channel.id) then
         event.message.create_reaction "\u{1F35E}"
     end
+}
+
+bot.command(
+    :define,
+    description: "Fetch all definitions for the word from the Sajem Tan dictionary",
+    min_args: 1,
+    usage: "define <word...>"
+) { |event, *words|
+    for word in words
+        event.respond @lexicon.define_formatted word
+    end
+    nil
 }
 
 bot.command(
