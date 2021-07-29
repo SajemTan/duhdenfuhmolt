@@ -56,9 +56,9 @@ def format_entry(pos, data)
                 when "see also"
                     result << "*see also:* **#{e[1]}**"
                 when "example"
-                    result << "*example:* #{e[1]} (#{definition[2]})"
+                    result << "*example:* #{e[1]} (#{e[2]})"
                 when "suf-example"
-                    result << "*example:* #{e[1]} \u2192 #{definition[2]}"
+                    result << "*example:* #{e[1]} \u2192 #{e[2]}"
             end
         end
     }

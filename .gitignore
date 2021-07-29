@@ -5,3 +5,6 @@ env/*
 /reactions
 
 *~
+*.swp
+
+*.db
