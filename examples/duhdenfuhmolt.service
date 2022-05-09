@@ -1,17 +1,15 @@
 [Unit]
 Description=Duhdenfuhmolt
 Documentation=https://github.com/SajemTan/duhdenfuhmolt
-After=network-online.target
-Wants=dhcpcd.service
+# Wants=dhcpcd.service
 
 [Service]
 Type=simple
-User=<username>
-WorkingDirectory=/<pathto>/duhdenfuhmolt
-ExecStart=/<pathto>/duhdenfuhmolt/env/bin/python /<pathto>/duhdenfuhmolt/main.py
+WorkingDirectory=/home/opc/duhdenfuhmolt
+ExecStart=/usr/bin/ruby /home/opc/duhdenfuhmolt/main.rb
 ExecReload=/usr/bin/kill -HUP $MAINPID
-RestartSec=3s
+RestartSec=10s
 Restart=on-failure
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
